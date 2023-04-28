@@ -60,10 +60,6 @@
       .search-box input.active {
         opacity: 1;
       }
-      .search-box input {
-        color: #bfd72f;
-      }
-
       .search-box input::placeholder {
         color: #bfd72f;
       }
@@ -400,7 +396,10 @@
           var values = searchInput.value;
           searchData.classList.remove("active");
           searchData.innerHTML =
-            "<span style='font-weight: 800;'>" + values + "</span>";
+            "You just typed " +
+            "<span style='font-weight: 500;'>" +
+            values +
+            "</span>";
         } else {
           searchData.textContent = "";
         }
