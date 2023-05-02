@@ -20,9 +20,23 @@
       rel="stylesheet"
       href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
     />
+
     <style>
+      #map {
+        height: 100vh;
+        width: 100%;
+      }
+
       body {
         background: #ace1af;
+      }
+
+      html,
+      ::selection {
+        color: #fff;
+        background: #ace1af;
+        /* background-image: url("14.avif"); */
+        background-size: cover;
       }
 
       * {
@@ -30,15 +44,13 @@
         padding: 0;
         box-sizing: border-box;
       }
+
       @font-face {
         font-family: pop;
 
         src: url(./Fonts/Poppins-Medium.ttf);
       }
-      #map {
-        height: 600px;
-        width: 100%;
-      }
+
       .main {
         width: 100%;
         margin-top: 20px;
@@ -49,6 +61,7 @@
         font-family: pop;
         flex-direction: column;
       }
+
       .head {
         text-align: center;
       }
@@ -181,7 +194,7 @@
   <body>
     <div class="main">
       <div class="head">
-        <p class="head_1"><span>Drawingland</span></p>
+        <p class="head_1"><span>Location</span></p>
       </div>
 
       <ul>
@@ -228,7 +241,6 @@
       </ul>
       <br />
       <br />
-
       <div id="map"></div>
     </div>
 
@@ -240,7 +252,6 @@
       const five = document.querySelector(".five");
       one.classList.add("active");
       two.classList.add("active");
-      three.classList.add("active");
 
       one.onclick = function () {
         one.classList.add("active");
@@ -285,22 +296,39 @@
       };
     </script>
     <script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
+    <script type="text/javascript" src="leaflet/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.2.3/leaflet.draw.js"></script>
-
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDdclCBZ2JEX1vdta5LgPiDcCB9jdFprCI&callback=initMap"
+      async
+      defer
+    ></script>
     <script>
       //Creating map and setting zoom
-      var map = L.map("map").setView([45.865, -75.2094], 3);
+      // var map = L.map("map").setView([45.865, -75.2094], 3);
 
       // Set up the OSM layer
       mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
 
-      L.tileLayer("https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}", {
-        attribution: "Google Maps",
-        maxZoom: 20,
-      }).addTo(map);
+      var osmLayer = L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          attribution: "&copy; OpenStreetMap contributors",
+        }
+      );
+
+      // Create map and add OpenStreetMap layer
+      var map = L.map("map", {
+        center: [40.7128, -74.006], // New York City coordinates
+        zoom: 12,
+        layers: [osmLayer],
+      });
+
+      // Add Google Maps overlay
+      var googleLayer = new L.Google("ROADMAP");
+      map.addLayer(googleLayer);
 
       // Initialise the FeatureGroup to store editable layers
-
       var drawnItems = new L.FeatureGroup();
       map.addLayer(drawnItems);
 
@@ -320,6 +348,5 @@
         drawnItems.addLayer(layer);
       });
     </script>
-    <script type="text/javascript" src="leaflet/leaflet.js"></script>
   </body>
 </html>
