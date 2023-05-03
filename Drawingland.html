@@ -30,6 +30,7 @@
         padding: 0;
         box-sizing: border-box;
       }
+
       @font-face {
         font-family: pop;
 
@@ -305,17 +306,47 @@
       map.addLayer(drawnItems);
 
       // Initialise the draw control and pass it the FeatureGroup of editable layers
+      // Initialise the draw control and pass it the FeatureGroup of editable layers
       var drawControl = new L.Control.Draw({
         edit: {
           featureGroup: drawnItems,
         },
+        draw: {
+          polyline: {
+            shapeOptions: {
+              color: "red",
+            },
+          },
+          polygon: false,
+          circle: false,
+          circlemarker: false,
+          rectangle: false,
+          marker: false,
+        },
       });
+
       map.addControl(drawControl);
+
       map.on("draw:created", function (e) {
         var type = e.layerType,
           layer = e.layer;
         if (type === "marker") {
           layer.bindPopup("A popup!");
+        }
+        drawnItems.addLayer(layer);
+      });
+      map.on("draw:created", function (e) {
+        var type = e.layerType,
+          layer = e.layer;
+        if (type === "polyline") {
+          // Check if last point is close enough to first point
+          var latlngs = layer.getLatLngs();
+          var first = latlngs[0];
+          var last = latlngs[latlngs.length - 1];
+          var distance = first.distanceTo(last);
+          if (distance < 100) {
+            layer.removeLatLng(latlngs.length - 1);
+          }
         }
         drawnItems.addLayer(layer);
       });
