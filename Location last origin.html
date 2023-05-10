@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ai Grow Farm</title>
+    <title>Animated Step Progress Bar</title>
     <link rel="stylesheet" href="style.css" />
 
     <!-- UniIcon CDN Link  -->
@@ -23,22 +23,7 @@
         width: 80%;
         border-radius: 20px;
       }
-      .pac-item {
-        border-top: 0px solid #e6e6e6;
-      }
 
-      .pac-item-query {
-        color: #bfd72f;
-      }
-      .pac-container {
-        border-top: 0px solid #e6e6e6;
-        margin-top: 5px;
-        padding-top: 10px;
-        border-radius: 10px;
-        position: relative;
-        background-color: #208d43;
-        color: #bfd72f;
-      }
       @import url("https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap");
       body {
         background: #ace1af;
@@ -349,7 +334,6 @@
 
       <div class="search-box">
         <input type="text" placeholder="Type to search.." />
-        <div class="pac-container"></div>
         <div class="search-icon">
           <i class="fas fa-search"></i>
         </div>
@@ -360,6 +344,7 @@
       <div class="search-data"></div>
       <div id="map"></div>
     </div>
+
     <script>
       const one = document.querySelector(".one");
       const two = document.querySelector(".two");
@@ -411,70 +396,27 @@
         window.location.href = "Done.html";
       };
     </script>
-
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDdclCBZ2JEX1vdta5LgPiDcCB9jdFprCI&libraries=places"></script>
     <script>
       const searchBox = document.querySelector(".search-box");
       const searchBtn = document.querySelector(".search-icon");
       const cancelBtn = document.querySelector(".cancel-icon");
       const searchInput = document.querySelector("input");
       const searchData = document.querySelector(".search-data");
-      const mapDiv = document.getElementById("map");
-
-      let map, marker;
-
-      // Initialize the map with a default location
-      function initMap() {
-        map = new google.maps.Map(mapDiv, {
-          center: { lat: 6.9271, lng: 79.8612 },
-
-          zoom: 8,
-        });
-      }
-
-      // Create the autocomplete object and bind it to the search box
-      function initAutocomplete() {
-        const autocomplete = new google.maps.places.Autocomplete(searchInput);
-        autocomplete.setFields(["formatted_address", "geometry"]);
-
-        // When a place is selected, show it on the map
-        autocomplete.addListener("place_changed", () => {
-          searchData.classList.remove("active");
-          searchBox.classList.add("active");
-          searchBtn.classList.add("active");
-          searchInput.classList.add("active");
-          cancelBtn.classList.add("active");
-          if (marker) marker.setMap(null);
-          const place = autocomplete.getPlace();
-          if (!place.geometry) {
-            console.log("No geometry");
-            return;
-          }
-          map.setCenter(place.geometry.location);
-          map.setZoom(14);
-          marker = new google.maps.Marker({
-            map: map,
-            position: place.geometry.location,
-          });
-          console.log(place.geometry.location.lat());
-          console.log(place.geometry.location.lng());
-
-          // Store latitude and longitude in localStorage
-          localStorage.setItem("lat", place.geometry.location.lat());
-          localStorage.setItem("lng", place.geometry.location.lng());
-        });
-      }
-
-      // When the search button is clicked, show the search box
       searchBtn.onclick = () => {
         searchBox.classList.add("active");
         searchBtn.classList.add("active");
         searchInput.classList.add("active");
         cancelBtn.classList.add("active");
         searchInput.focus();
+        if (searchInput.value != "") {
+          var values = searchInput.value;
+          searchData.classList.remove("active");
+          searchData.innerHTML =
+            "<span style='font-weight: 800;'>" + values + "</span>";
+        } else {
+          searchData.textContent = "";
+        }
       };
-
-      // When the cancel button is clicked, hide the search box
       cancelBtn.onclick = () => {
         searchBox.classList.remove("active");
         searchBtn.classList.remove("active");
@@ -483,11 +425,7 @@
         searchData.classList.toggle("active");
         searchInput.value = "";
       };
-
-      initMap();
-      initAutocomplete();
     </script>
-
     <script>
       function initMap() {
         // Set the coordinates for the center of the map (Colombo, Sri Lanka)
@@ -787,5 +725,6 @@
         });
       }
     </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDdclCBZ2JEX1vdta5LgPiDcCB9jdFprCI&callback=initMap"></script>
   </body>
 </html>

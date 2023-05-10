@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Animated Step Progress Bar</title>
+    <title>Ai Grow Farm</title>
     <link
       rel="stylesheet"
       href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css"
@@ -289,8 +289,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.2.3/leaflet.draw.js"></script>
 
     <script>
+      const lat = localStorage.getItem("lat");
+      const lng = localStorage.getItem("lng");
+
       //Creating map and setting zoom
-      var map = L.map("map").setView([45.865, -75.2094], 3);
+      var map = L.map("map").setView([lat, lng], 19);
 
       // Set up the OSM layer
       mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
@@ -301,27 +304,34 @@
       }).addTo(map);
 
       // Initialise the FeatureGroup to store editable layers
-
       var drawnItems = new L.FeatureGroup();
       map.addLayer(drawnItems);
 
-      // Initialise the draw control and pass it the FeatureGroup of editable layers
+      var polylineOptions = {
+        color: "red",
+        fillColor: "#FF7276",
+        fillOpacity: 0.5,
+      };
+
       // Initialise the draw control and pass it the FeatureGroup of editable layers
       var drawControl = new L.Control.Draw({
         edit: {
           featureGroup: drawnItems,
         },
         draw: {
-          polyline: {
-            shapeOptions: {
+          polygon: {
+            shapeOptions: polylineOptions,
+            allowIntersection: false,
+            drawError: {
               color: "red",
+              message: "Polygon edges cannot cross!",
             },
           },
-          polygon: false,
           circle: false,
           circlemarker: false,
           rectangle: false,
           marker: false,
+          polyline: false,
         },
       });
 
@@ -330,25 +340,12 @@
       map.on("draw:created", function (e) {
         var type = e.layerType,
           layer = e.layer;
-        if (type === "marker") {
-          layer.bindPopup("A popup!");
+        if (type === "polygon") {
+          drawnItems.addLayer(layer);
+          layer.setStyle(polylineOptions);
+          var latlngs = layer.getLatLngs()[0]; // Get the latlngs of the polygon
+          console.log(latlngs); // Log the latlngs to the console
         }
-        drawnItems.addLayer(layer);
-      });
-      map.on("draw:created", function (e) {
-        var type = e.layerType,
-          layer = e.layer;
-        if (type === "polyline") {
-          // Check if last point is close enough to first point
-          var latlngs = layer.getLatLngs();
-          var first = latlngs[0];
-          var last = latlngs[latlngs.length - 1];
-          var distance = first.distanceTo(last);
-          if (distance < 100) {
-            layer.removeLatLng(latlngs.length - 1);
-          }
-        }
-        drawnItems.addLayer(layer);
       });
     </script>
     <script type="text/javascript" src="leaflet/leaflet.js"></script>
